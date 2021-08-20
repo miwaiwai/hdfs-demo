@@ -11,6 +11,11 @@
 package com.bigdata.hdfs;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * 〈HdfsClient 类〉
@@ -18,13 +23,22 @@ import org.apache.hadoop.conf.Configuration;
 public class HdfsClient {
 
     // 上传文件
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
 
+        // 配置Hadoop用户名
+        System.setProperty("HADOOP_USER_NAME","bigdata");
         // 获取文件系统
         Configuration configuration = new Configuration();
         // 配置在集群上运行
-        // configuration.set("fs.defaultFS", "hdfs://hadoop102:9000");
-        // FileSystem fs = FileSystem.get(configuration);
-
+//      FileSystem fs = FileSystem.get(new URI("hdfs://hadoop102:9000"), configuration, "bigdata");
+        // hadoop100为192.168.1.100
+        configuration.set("fs.defaultFS", "hdfs://hadoop100:9000");
+        FileSystem fs = FileSystem.get(configuration);
+        //上传文件
+        fs.copyFromLocalFile(new Path("f:/hello.txt"),new Path("/hello2.txt"));
+        // 关闭资源
+        fs.close();
+        System.out.println("over");
     }
+
 }
